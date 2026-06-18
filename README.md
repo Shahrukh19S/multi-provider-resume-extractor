@@ -6,9 +6,10 @@ over a **free-tier provider stack** — with validation-retries, transport retri
 provider fallback, and (where supported) context caching. Runs at **$0**; cost is
 reported as a hypothetical analysis at published list prices.
 
-> **Status:** Phase 2 build in progress. **Milestones 1–2 complete** (scaffold +
+> **Status:** Phase 2 build in progress. **Milestones 1–3 complete** (scaffold +
 > schema + Gemini sanity; single-provider extraction via Gemini native structured
-> outputs). See `Phase-2-Build-Kit/BUILD-PLAN.md`.
+> outputs; PDF ingestion — multimodal + text paths). See
+> `Phase-2-Build-Kit/BUILD-PLAN.md`.
 
 ## Provider stack (free tiers only — no Anthropic, no paid OpenAI)
 
@@ -46,5 +47,16 @@ print(resume.full_name, resume.skills)
 ```
 
 Uses Gemini native structured outputs (`temperature=0`), validates into the
-`Resume` pydantic model, and retries on free-tier rate limits. PDF input lands in
-Milestone 3.
+`Resume` pydantic model, and retries on transient errors (429/5xx).
+
+## Extract from a PDF (Milestone 3)
+
+```python
+from resume_extractor import extract_resume_from_pdf, extract_resume_from_pdf_text
+
+# Gemini multimodal — send the PDF directly (best for messy/multi-column layouts)
+resume = extract_resume_from_pdf("resume.pdf")
+
+# Text path — pypdf text extraction, then extract (what text-only providers use)
+resume = extract_resume_from_pdf_text("resume.pdf")
+```

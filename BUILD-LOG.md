@@ -98,3 +98,42 @@ experience/education populated, no hallucination. `uv run pytest` → 8 passed,
 
 **Chosen mode:** native structured outputs (preferred per rule #2) — not
 tool-forcing or plain-prompt JSON.
+
+## Milestone 3 — PDF ingestion (two paths)
+
+`ingest.pdf_to_text()` (pypdf, text-only-provider path) +
+`extract.extract_resume_from_pdf()` (Gemini **multimodal**, native `response_schema`)
+and `extract.extract_resume_from_pdf_text()` (pypdf → text path). Both confirmed
+live on real resume PDFs; `uv run pytest tests/test_pdf_ingestion.py` → 2 passed.
+Full suite: 8 passed, 2 skipped→now also covered when PDFs present.
+
+**Verification (rule #3):** confirmed the google-genai PDF API live —
+`types.Part.from_bytes(mime_type="application/pdf")` in `contents` +
+`config.response_schema=<Pydantic>` → `response.parsed` returns the model. Also
+sanity-checked `response_schema=Resume` via a text prompt before wiring the PDF
+call.
+
+**Design decision:** the multimodal path calls **google-genai directly** (not
+through instructor) — instructor's multimodal genai wrapper isn't cleanly exposed
+in 1.15.3, and the direct SDK call is still native structured outputs and fully
+controllable. The text path stays on instructor (unification + validation-retries).
+
+**Trade-off (full table in BENCHMARK.md):** multimodal wins on messy/multi-column/
+icon-font PDFs (pypdf collapses spacing and leaks icon-font glyphs as fake tokens);
+pypdf text is fine & cheaper for clean single-column and is the only path for
+text-only providers. Both miss skills rendered as graphics (proficiency bars).
+
+**Things that broke / notes:**
+- **Transient 503 UNAVAILABLE** ("high demand") surfaced — the M2 retry only
+  matched 429. Broadened the predicate (`_is_transient`) to 429 + 5xx /
+  unavailable / overloaded / timeouts (rule #8). Re-ran green.
+- **Free-tier RPM 429** when firing ~8 extractions back-to-back — confirms
+  CHANGE-BRIEF "don't hammer / batch test runs." Retry helps; spacing calls helps
+  more. Full fallback chain is M5.
+- **Windows console `UnicodeEncodeError`** printing an emoji (📱) from a resume to
+  cp1252 stdout — a *diagnostic-print* issue, not in library code. Flag for the M9
+  CLI: force UTF-8 stdout on Windows.
+- **Duplicate sample:** `clean_resumes_sample1.pdf` and
+  `multi_column_resume_sample1.pdf` are byte-identical (same Byungjin Park resume).
+- **Privacy:** `tests/sample_resumes/*.pdf` is git-ignored (real resumes are
+  personal data); only the folder README is tracked.

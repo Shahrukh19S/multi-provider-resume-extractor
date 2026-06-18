@@ -14,6 +14,30 @@ not bolted on at the end.
 
 > Cost is **hypothetical** — actual spend is $0 on free tiers (see METRICS-SPEC §2).
 
+## PDF ingestion trade-off (Milestone 3)
+
+Two ingestion paths: **Gemini multimodal** (send the PDF directly) vs. **pypdf
+text extraction** (flatten to text, then extract — the path text-only providers
+must use). Observed on the sample set (field *counts*, not graded accuracy — that's
+Milestone 7):
+
+| Resume (layout) | pypdf text quality | Text-path result | Multimodal result | Takeaway |
+|---|---|---|---|---|
+| MARY SMITH (clean, 1-col) | clean (9.3k chars) | name✓, skills 3, exp 3, edu 1 | identical | **tie** — text path is fine & cheaper |
+| Byungjin Park (multi-col, icon-font) | **mangled**: collapsed spaces (`DevOpsEngineer`), icon glyphs leak as words (`HOUSE-CHIMNEY`, `GITHUB-SQUARE`, 📱) | degraded input | name✓, exp 8, edu 1, **skills 0** | **multimodal wins** on layout; but skills shown as visual bars were missed by *both* |
+| Debarghya Das (2-col) | flattened but legible (3.3k chars) | name✓, skills 17, exp 6, edu 3 | (not measured — hit 429) | LLM recovers structure from flattened 2-col text |
+
+**Conclusions (decision log):**
+- **Default to Gemini multimodal for messy / multi-column / icon-font PDFs** — it
+  preserves reading order and doesn't leak icon-font glyphs that pypdf turns into
+  fake "skills"/tokens.
+- **pypdf text is adequate (and cheaper) for clean single-column** resumes, and is
+  the **only** path for text-only providers (Groq, GitHub Models) in M4.
+- **Caveat both ways:** pypdf collapses spacing / leaks glyph names; multimodal can
+  miss info rendered as *graphics* (proficiency bars → `skills: []`). A skills-bar
+  resume is a known hard case for both.
+- Token usage + hypothetical $ per path: deferred to Milestone 6.
+
 ## 1. Accuracy (Milestone 7)
 
 | Provider | Model | Overall field-acc | Notable per-field |
