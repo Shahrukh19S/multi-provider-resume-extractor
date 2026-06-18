@@ -1,0 +1,85 @@
+{
+  "full_name": "Allie Gator",
+  "email": "albertagator@ufl.edu",
+  "phone": "352-290-5678",
+  "location": "Gainesville, FL 32611",
+  "summary": null,
+  "skills": [
+    "Computer Design Softwares: Adobe Creative Suite, SolidWorks, Graphic Design, Rapid Prototyping, Sketching and Drafting, HTML/CSS, Mac OSX, Windows, Ubuntu",
+    "Language: Conversational Spanish"
+  ],
+  "experience": [
+    {
+      "company": "Freelance Web & Graphic Design",
+      "title": "Graphic Designer",
+      "start_date": "August 2019",
+      "end_date": "Present",
+      "highlights": [
+        "consult with clients to address branding and marketing needs",
+        "desktop and mobile devices; create and design motion graphics"
+      ]
+    },
+    {
+      "company": "Design Awaken Arts",
+      "title": "Studio Co-Founder & Leader",
+      "start_date": "May 2020",
+      "end_date": "Present",
+      "highlights": [
+        "Co-founded and successfully applied to the national Design for America network",
+        "Managed seven project teams while spearheading ideation and prototyping workshops",
+        "Oversaw and implemented outreach efforts, as a result, student members grew from 5-50",
+        "Planned professional development events and regional conferences"
+      ]
+    },
+    {
+      "company": "University of Florida",
+      "title": "Design Aide, Department of Applied Innovation",
+      "start_date": "June 2021",
+      "end_date": "April 2022",
+      "highlights": [
+        "Ran 3D printing workshops and training for groups of 15-30 participants",
+        "Designed posters, banners and managed social media platforms to promote upcoming events",
+        "Monitored studio space and assisted staff in need of fabrication, CAD, or design support"
+      ]
+    },
+    {
+      "company": "Amazon",
+      "title": "UX Design Intern",
+      "start_date": "June 2021",
+      "end_date": "August 2021",
+      "highlights": [
+        "Designed iOS and Android interfaces for popular productivity app",
+        "Collaborated with software engineers to execute and implement new designs",
+        "Worked with design consultants to create a more positive user experience"
+      ]
+    },
+    {
+      "company": "Amazon Design Department",
+      "title": "UX Job Shadow Program Participant",
+      "start_date": "December 2020",
+      "end_date": null,
+      "highlights": [
+        "Participated in UCI’s job shadow program, gaining exposure to the company culture, sitting in on design meetings and contributing feedback for upcoming design projects"
+      ]
+    },
+    {
+      "company": "Design for Innovation",
+      "title": "Research Assistant",
+      "start_date": "October 2020",
+      "end_date": "December 2020",
+      "highlights": [
+        "Developed various prototype posture correcting mechanisms for pressure actuation devices",
+        "Built a system for retrofitting Aeron chairs with pressure actuators for human testing"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Florida",
+      "degree": "Bachelor of Arts in Digital Arts",
+      "field_of_study": null,
+      "start_year": null,
+      "end_year": 2023
+    }
+  ]
+}

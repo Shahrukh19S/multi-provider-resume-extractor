@@ -1,0 +1,56 @@
+{
+  "full_name": "MARY SMITH",
+  "email": "msmith2@illinois.edu",
+  "phone": "(217) 765-3458",
+  "location": "4004 Helix Lane Urbana, IL 61801",
+  "summary": null,
+  "skills": [
+    "C++ (Advanced)",
+    "Adobe Photoshop (Intermediate)",
+    "HTML (Basic)"
+  ],
+  "experience": [
+    {
+      "company": "Aon Corporation",
+      "title": "IT Intern",
+      "start_date": "June 2020",
+      "end_date": "August 2020",
+      "highlights": [
+        "Responded to over 40 employees’ requests in order to assist with any computer malfunctioning problems",
+        "Aided in developing a new software application by utilizing programming skills",
+        "Contributed to reaching daily goals by expediting the reviewing process with a 99.5% accuracy rate"
+      ]
+    },
+    {
+      "company": "Chicago Marketing Corporation",
+      "title": "Sales Assistant",
+      "start_date": "June 2019",
+      "end_date": "August 2019",
+      "highlights": [
+        "Assisted in developing and implementing integrated advertising plans which included newspaper, internet and alternative advertising sources",
+        "Planned and participated in weekly meetings for a sales staff of over 50 representatives",
+        "Coordinated an office opening in Springfield, which subsequently generated over $315,000 in revenue and $57,000 in operating income"
+      ]
+    },
+    {
+      "company": "Outback Steakhouse",
+      "title": "Server",
+      "start_date": "June 2018",
+      "end_date": "August 2018",
+      "highlights": [
+        "Promoted and implemented effective marketing campaigns for specific food items",
+        "Trained 15 new employees by teaching them necessary daily procedures to provide an enjoyable dining experience for guests",
+        "Provided quality customer service by responding to customer needs promptly and efficiently"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Illinois at Urbana-Champaign",
+      "degree": "Bachelor of Science",
+      "field_of_study": "Computer Science",
+      "start_year": null,
+      "end_year": 2021
+    }
+  ]
+}

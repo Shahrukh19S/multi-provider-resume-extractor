@@ -9,22 +9,13 @@ wheels/
 # Virtual environments
 .venv
 
-# Secrets — NEVER commit real keys (SETUP.md §3)
+# Secrets — NEVER commit real keys
 .env
 .env.*
 !.env.example
 
-# Local planning docs — never publish (gitignore has no inline comments, so the
-# pattern gets its own line; the label lives here as a standalone comment)
+# Local planning docs — never publish
 Phase-2-Build-Kit/
 
-# Real resumes are personal data — keep PDFs local on a public repo.
-# Force-add a clearly-synthetic sample if you want one committed.
-tests/sample_resumes/*.pdf
-
-# Eval: cached predictions + bootstrapped labels from real resumes may contain PII.
-# (The synthetic eval set under eval/text_resumes/ and eval/gold/ IS committed.)
+# Regenerable cached predictions — keep repo lean
 eval/cache/
-eval/gold_pdf/
-eval/REPORT.md
-eval/latency.json

@@ -1,0 +1,104 @@
+{
+  "full_name": "Debarghya Das",
+  "email": "deedy@fb.com",
+  "phone": "607.379.5733",
+  "location": null,
+  "summary": null,
+  "skills": [
+    "Java",
+    "Shell",
+    "Python",
+    "Javascript",
+    "OCaml",
+    "Matlab",
+    "Rails",
+    "LATEX",
+    "C",
+    "C++",
+    "CSS",
+    "PHP",
+    "Assembly",
+    "AS3",
+    "iOS",
+    "Android",
+    "MySQL"
+  ],
+  "experience": [
+    {
+      "company": "FACEBOOK",
+      "title": "Software Engineer",
+      "start_date": "Jan 2015",
+      "end_date": "Present",
+      "highlights": []
+    },
+    {
+      "company": "COURSERA",
+      "title": "KPCB Fellow + Software Engineering Intern",
+      "start_date": "June 2014",
+      "end_date": "Sep 2014",
+      "highlights": [
+        "52 out of 2500 applicants chosen to be a KPCB Fellow 2014.",
+        "Led and shipped Yoda - the admin interface for the new Phoenix platform.",
+        "Full-stack developer - Wrote and reviewed code for JS using Backbone, Jade, Stylus and Require and Scala using Play"
+      ]
+    },
+    {
+      "company": "GOOGLE",
+      "title": "Software Engineering Intern",
+      "start_date": "May 2013",
+      "end_date": "Aug 2013",
+      "highlights": [
+        "Worked on the YouTubeCaptions team, in Javascript and Python to plan, to design and develop the full stack to add and edit Automatic Speech Recognition captions. In production.",
+        "Created a backbone.js-like framework for the Captions editor."
+      ]
+    },
+    {
+      "company": "PHABRICATOR",
+      "title": "Open Source Contributor & Team Leader",
+      "start_date": "Jan 2013",
+      "end_date": "May 2013",
+      "highlights": [
+        "Phabricator is used daily by Facebook, Dropbox, Quora, Asana and more.",
+        "I created the Meme generator and more in PHP and Shell.",
+        "Led a team from MIT, Cornell, IC London and UHelsinki for the project."
+      ]
+    },
+    {
+      "company": "CORNELL ROBOT LEARNING LAB",
+      "title": "Researcher",
+      "start_date": "Jan 2014",
+      "end_date": "Jan 2015",
+      "highlights": []
+    },
+    {
+      "company": "CORNELL PHONETICS LAB",
+      "title": "Head Undergraduate Researcher",
+      "start_date": "Mar 2012",
+      "end_date": "May 2013",
+      "highlights": []
+    }
+  ],
+  "education": [
+    {
+      "institution": "CORNELL UNIVERSITY",
+      "degree": "MEng",
+      "field_of_study": "Computer Science",
+      "start_year": null,
+      "end_year": 2014
+    },
+    {
+      "institution": "CORNELL UNIVERSITY",
+      "degree": "BS",
+      "field_of_study": "Computer Science",
+      "start_year": null,
+      "end_year": 2014
+    },
+    {
+      "institution": "LA MARTINIERE FOR BOYS",
+      "degree": null,
+      "field_of_study": null,
+      "start_year": null,
+      "end_year": 2011
+    }
+  ]
+}

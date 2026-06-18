@@ -41,5 +41,7 @@ __all__ = [
 
 
 def main() -> None:
-    """Placeholder CLI entrypoint (built out in Milestone 9)."""
-    print("resume-extractor — see `uv run python -m resume_extractor.sanity`")
+    """CLI entry point — delegates to `resume_extractor.cli` (lazy import)."""
+    from .cli import main as cli_main
+
+    raise SystemExit(cli_main())

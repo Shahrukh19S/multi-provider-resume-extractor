@@ -300,3 +300,31 @@ BENCHMARK.md (METRICS-SPEC §5 format) + headline one-liners.
 up on an exhausted-for-the-day Gemini call. A future tweak could parse the quota
 metric / `RetryInfo` to fail fast on daily caps. Left as-is for now (correct, just
 slow on an exhausted day).
+
+## Milestone 9 — package + finalize for public release (local only)
+
+- **CLI** (`cli.py` + `__main__.py`; script repointed to `resume_extractor.cli:main`):
+  `resume-extractor FILE [--provider gemini|groq|github] [--fallback] [--cost]`.
+  Routes PDFs to Gemini multimodal or the pypdf text path; JSON to stdout,
+  diagnostics to stderr; forces UTF-8 stdout (the Windows emoji issue); clean errors
+  (file-not-found → exit 2, missing key / all-providers-failed → exit 1).
+- **`caching.py`** added (was referenced but never created) — caching analysis +
+  `cache_read_fraction`.
+- **README** rewritten: problem statement, Mermaid data-flow diagram, full project
+  tree, per-module guide, how-to-run, consolidated benchmark, and a production
+  decision log.
+- **Module docstrings** confirmed on every `src/resume_extractor/*.py`.
+- **`tests/sample_resumes/CREDITS.md`** — identified each PDF and verified licenses
+  from source: Illinois (Mary Smith) + UF (17-pg) are public career-center handouts
+  with **fictional** examples; Awesome-CV is **LPPL-1.3c** (⚠️ *not* MIT as the brief
+  assumed — verified from its `LICENCE`); Deedy-Resume is **Apache-2.0**. Stated
+  clearly that all samples are public templates / open-source examples / synthetic —
+  no real PII.
+- **`.gitignore` replaced** (per instruction) to publish the samples + gold for a
+  reproducible benchmark while keeping `.env`, `Phase-2-Build-Kit/`, and the
+  regenerable `eval/cache/` out. ⚠️ The provided file does **not** list `.ruff_cache/`
+  or `.pytest_cache/` — deleted them before committing; recommend adding those two
+  lines later.
+- **No push.** Committed locally only; the user publishes manually.
+
+`ruff` clean; `pytest` 27 passed / 4 skipped (Gemini daily quota).

@@ -27,7 +27,7 @@ price. Verified by `eval/run_eval.py` + `eval/latency.py`.
 
 | Provider (path) | Text acc (exact gold) | PDF acc (verified gold) | Hyp. cost / 1k | Latency median | Notes |
 |---|---|---|---|---|---|
-| Gemini (multimodal PDF) | — | **80.4%** (n=4) | $0.60 | _deferred_ | only native PDF path; best on multi-column structure |
+| Gemini (multimodal PDF) | — | **80.4%** (n=4) | $0.60 | _pending fresh-quota run_ | only native PDF path; best on multi-column structure |
 | Groq (text) | **100%** (n=4) | **85.4%** (n=4) | $1.94 | **0.67s** | fastest; `Mode.JSON` (reliable, heavier tokens) |
 | GitHub Models (text) | **100%** (n=4) | 100%\* (n=3) | **$0.155** | 3.93s | \*gold-seeder → ceiling by construction; cheapest; small input cap |
 
@@ -159,9 +159,10 @@ Wall-clock per extraction (`eval/latency.py`); text path on the synthetic set,
 
 - **Groq is ~6× faster than GitHub Models** (0.67s vs 3.93s median) — its headline
   speed advantage (custom inference hardware), making it the natural workhorse.
-- **Gemini latency deferred:** the ~20/day free quota was exhausted by the day's
-  accuracy + cost runs, so timed PDF calls 429'd. Re-run `uv run python
-  eval/latency.py --gemini` on a fresh quota day to fill this row.
+- **Gemini latency — PENDING a fresh-quota run.** The ~20/day free quota was
+  exhausted by the day's accuracy + cost runs, so timed PDF calls 429'd. This row is
+  intentionally left blank; fill it by running `uv run python eval/latency.py
+  --gemini` on a day with unused Gemini quota.
 
 ## 4. Reliability (Milestone 5)
 

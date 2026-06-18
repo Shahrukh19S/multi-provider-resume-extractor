@@ -1,0 +1,17 @@
+{
+  "groq_text": {
+    "n": 8,
+    "median_s": 0.67,
+    "p95_s": 2.25,
+    "min_s": 0.6,
+    "max_s": 2.25
+  },
+  "github_text": {
+    "n": 8,
+    "median_s": 3.93,
+    "p95_s": 4.96,
+    "min_s": 2.94,
+    "max_s": 4.96
+  },
+  "gemini_multimodal": null
+}

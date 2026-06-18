@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-resume-extractor = "resume_extractor:main"
+resume-extractor = "resume_extractor.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.11.19,<0.12.0"]

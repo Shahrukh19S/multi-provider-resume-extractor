@@ -1,0 +1,128 @@
+{
+  "full_name": "Byungjin Park",
+  "email": "posquit0.bj@gmail.com",
+  "phone": "(+82) 10-9030-1843",
+  "location": "Mapo-gu, Seoul, Republic of Korea",
+  "summary": "Seasoned SRE/DevOps leader currently on a career sabbatical cherishing family moments, seeking high-impact opportunities in fast-growing start-up companies. With 15+ years of hands-on software engineering expertise — specializing in service architecture, DevOps & SRE practices, infrastructure operations, and security engineering — proven in scaling infrastructure teams as lead engineer and founding member at two fintech companies. Delivered technical advisory and consulting for DeFi, AI, and B2B SaaS startups, optimizing cloud-native architectures (AWS multi-account, Kubernetes, Terraform) for reliability and scalability. Passionate to contribute to open-source projects and tech communities through knowledge sharing knowledge and experience. Big fan of terminal-centric workflows on macOS with zsh, Tmux, NeoVim, and chezmoi; relentlessly optimizes personal setups and experiments with Claude Code-powered AI workflows to tackle complex challenges faster.",
+  "skills": [
+    "DevOps",
+    "Software Architecture",
+    "SRE",
+    "Infrastructure Operations",
+    "Security Engineering",
+    "AWS",
+    "Kubernetes",
+    "Terraform",
+    "CI/CD",
+    "Microservices",
+    "Observability",
+    "Monitoring",
+    "API Development",
+    "Networking",
+    "Cloud Computing",
+    "Open Source Contribution"
+  ],
+  "experience": [
+    {
+      "company": "Dunamu Inc.",
+      "title": "DevOps Engineer",
+      "start_date": "Sep. 2023",
+      "end_date": "Mar. 2024",
+      "highlights": [
+        "Led service mesh technology research and implementation across enterprise cross-cluster environments, evaluating Istio, Cilium, Kuma, Consul, and AWS VPC Lattice for enhanced security and scalability.",
+        "Designed Terraform modules to efficiently manage and scale infrastructure across dozens of AWS accounts, enabling standardized, repeatable deployments."
+      ]
+    },
+    {
+      "company": "Danggeun Pay Inc. (Karrot Pay)",
+      "title": "Founding Member & Site Reliability Engineer & Infrastructure Team Lead",
+      "start_date": "Mar. 2021",
+      "end_date": "Jun. 2023",
+      "highlights": [
+        "Designed and provisioned the entire infrastructure on the AWS cloud to meet security compliance and acquire a business license for financial services in Korea.",
+        "Continuously improved the infrastructure architectures since launching the service. (currently 3.6 million users)",
+        "Established a standardized base for declarative management of infrastructures and service deployments, enabling operational efficiency and consistency. Over 90% of AWS resources were all managed through standardized terraform modules. All add-ons and service workloads on the Kubernetes cluster were managed on a GitOps basis with Kustomize and ArgoCD.",
+        "Saved over 30% of the overall AWS costs by establishing a quarterly purchasing strategy for RI (Reserved Instance) and SP (Savings Plan) and by introducing Graviton instances.",
+        "Established a core architecture for regulating outbound DNS traffic in multi-account and multi-VPC environments utilizing AWS Route 53 DNS Firewall and FMS. This significantly increased the level of security confidence in the financial sector’s segregated environment.",
+        "Introduced Okta employee identity solution in the company, establishing security policies and configuring SSO integration with over 20 enterprise systems including AWS, GitHub, Slack, Google Workspace. Set up a Hub and Spoke architecture, enabling a collaborative account structure with the parent company, Daangn Market."
+      ]
+    },
+    {
+      "company": "Danggeun Market Inc.",
+      "title": "Site Reliability Engineer",
+      "start_date": "Feb. 2021",
+      "end_date": "Mar. 2021",
+      "highlights": []
+    },
+    {
+      "company": "Kasa",
+      "title": "Founding Member & Director of Infrastructure Division",
+      "start_date": "Jun. 2018",
+      "end_date": "Jan. 2021",
+      "highlights": [
+        "Designed on-boarding process to guide new engineers, help them to focus on the right tasks, and set expectations to help them be successful at Infrastructure team.",
+        "Migrated the orchestration system from DC/OS to Kubernetes which is based on AWS EKS. Managed 3 Kubernetes clusters and 300+ pods. Managed all Kubernetes manifests declaratively with Kustomize and ArgoCD.",
+        "Designed and managed complex network configurations on AWS with 4 VPC and 100+ subnets. Separated the development network and operation network according to financial regulations. Established dedicated network connections from AWS VPC to partners’ on-premise network based on AWS Direct Connect with secure connection using IPsec VPN. Provisioned OpenVPN servers with LDAP integration.",
+        "Provisioned an observability system with Kafka, Elastic Stack (Filebeat, Heartbeat, APM Server, Logstash, Elasticsearch, Kibana). Collected log, uptime, tracing data from hosts, containers, pods and more. The ES cluster which has 9 nodes processed more than 1 billion documents per month. Wrote Terraform module to easily provision ES cluster on AWS EC2 instances.",
+        "Provisioned a monitoring system with Kafka, Telegraf, InfluxDB, Grafana. Collected metrics from hosts, containers, pods and more. Wrote Terraform module to easily provision InfluxDB with HA on AWS EC2 instances.",
+        "Introduced Kong API Gateway to easily connect all API microservices with a declarative management method based on Terraform and Atlantis to collaborate and audit change history.",
+        "Provisioned the Directory Service for employee identity management based on OpenLDAP which guarantees HA with multi-master replication.",
+        "Implemented Worker microservices consuming Kafka event topics for email, SMS, Kakaotalk and Slack notification. Developed in-house framework to easily build Kafka consumer microservice with common features including retry on failure, DLQ (Dead Letter Queue), event routing and more.",
+        "Introduced Elastic APM to help distributed tracing, trouble-shooting and performance testing in MSA."
+      ]
+    },
+    {
+      "company": "Omnious. Co., Ltd.",
+      "title": "Software Architect",
+      "start_date": "Jun. 2017",
+      "end_date": "May. 2018",
+      "highlights": [
+        "Provisioned an easily manageable hybrid infrastructure (Amazon AWS + On-premise) utilizing IaC (Infrastructure as Code) tools like Ansible, Packer and Terraform.",
+        "Built fully automated CI/CD pipelines on CircleCI for containerized applications using Docker, AWS ECR and Rancher.",
+        "Designed an overall service architecture and pipelines of the Machine Learning based Fashion Tagging API SaaS product with the micro-services architecture.",
+        "Implemented several API microservices in Node.js Koa and in the serverless AWS Lambda functions.",
+        "Deployed a centralized logging environment (ELK, Filebeat, CloudWatch, S3) which gather log data from docker containers and AWS resources.",
+        "Deployed a centralized monitoring environment (Grafana, InfluxDB, CollectD) which gathers system metrics as well as docker run-time metrics."
+      ]
+    },
+    {
+      "company": "PLAT Corp.",
+      "title": "Co-founder & Software Engineer",
+      "start_date": "Jan. 2016",
+      "end_date": "Jun. 2017",
+      "highlights": [
+        "Implemented RESTful API server for car rental booking application (CARPLAT in Google Play).",
+        "Built and deployed overall service infrastructure utilizing Docker container, CircleCI, and several AWS stack (Including EC2, ECS, Route 53, S3, CloudFront, RDS, ElastiCache, IAM), focusing on high-availability, fault tolerance, and auto-scaling.",
+        "Developed an easy-to-use Payment module which connects to major PG (Payment Gateway) companies in Korea."
+      ]
+    },
+    {
+      "company": "R.O.K Cyber Command, MND",
+      "title": "Software Engineer & Security Researcher (Compulsory Military Service)",
+      "start_date": "Aug. 2014",
+      "end_date": "Apr. 2016",
+      "highlights": [
+        "Lead engineer on agent-less backtracking system that can discover client device’s fingerprint (including public and private IP) independently of the Proxy, VPN and NAT."
+      ]
+    },
+    {
+      "company": "Shit One Corp.",
+      "title": "Software Engineer",
+      "start_date": "Dec. 2011",
+      "end_date": "Feb. 2012",
+      "highlights": [
+        "Developed a proxy drive smartphone application which connects proxy driver and customer.",
+        "Implemented overall Android application logic and wrote API server for community service, along with lead engineer who designed bidding protocol on raw socket and implemented API server for bidding."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "institution": "POSTECH (Pohang University of Science and Technology)",
+      "degree": "B.S.",
+      "field_of_study": "Computer Science and Engineering",
+      "start_year": 2010,
+      "end_year": 2017
+    }
+  ]
+}
