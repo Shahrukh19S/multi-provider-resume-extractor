@@ -48,14 +48,43 @@ Milestone 7):
 | Groq (fallback) | llama-3.3-70b-versatile | _TBD_ | _TBD_ |
 | GitHub Models | openai/gpt-4o-mini | _TBD_ | _TBD_ |
 
-## 2. Cost (Milestone 6)
+## 2. Cost (Milestone 6) — hypothetical; actual spend $0
 
-| Setting | Cost/resume | Notes |
-|---|---|---|
-| Caching OFF | _TBD_ | baseline |
-| Caching ON (1h TTL) | _TBD_ | ~__% cheaper |
+List prices (USD per 1M tokens), **verified 2026-06-18** (pinned in `costs.py`):
 
-Prices + date used: _record at Milestone 6._
+| Provider | Model | Input | Output | Cached input |
+|---|---|---|---|---|
+| Gemini | gemini-2.5-flash | $0.30 | $2.50 | $0.03 |
+| Groq | llama-3.3-70b-versatile | $0.59 | $0.79 | n/a (no cache discount) |
+| GitHub Models | openai/gpt-4o-mini | $0.15 | $0.60 | $0.075 |
+
+Measured on one representative resume (`temperature=0`):
+
+| Provider | Input tok | Output tok | Cached | $/resume | $/1,000 |
+|---|---|---|---|---|---|
+| Gemini | 176 | 219 | 0 | $0.000600 | **$0.60** |
+| Groq | 788 | 185 | 0 | $0.000611 | **$0.611** |
+| GitHub Models | 428 | 151 | 0 | $0.000155 | **$0.155** |
+
+**Findings:**
+- **Tool-forcing inflates input tokens.** Groq/GitHub use `Mode.TOOLS`, which puts
+  the full JSON function schema in the prompt → Groq counts **788** input tokens vs
+  Gemini's **176** (native `response_schema`, schema not billed as prompt). A direct
+  per-token comparison must account for this, not just the headline $/M price.
+- **gpt-4o-mini is cheapest** hypothetically here (~$0.155/1k), despite Gemini's
+  lower input price, because Gemini's output is pricier ($2.50/M) and resumes are
+  output-heavy (structured JSON).
+- Actual paid cost: **$0** (all free tiers).
+
+### Caching analysis (why it's ~0 for this workload)
+
+`cached_input_tokens` was **0** on every provider. For resume extraction the only
+shared prefix across calls is the system prompt (~60 tokens) and each resume body is
+unique — far below Gemini's implicit-cache minimum (≈1,024+ tokens for Flash) and
+with nothing else to reuse. **Prompt caching pays off with a large shared context
+(long instructions, RAG corpus, few-shot bank), not short unique resumes.** The
+plumbing reads `cached_input_tokens` and bills it at each provider's cached rate, so
+the saving would show automatically in a workload that *can* cache.
 
 ## 3. Latency (Milestone 7)
 
@@ -87,7 +116,10 @@ Result: `provider=groq, fallback_count=1, refusals=0` — counts logged.
 
 ## Headline numbers (for README + docs)
 
-- Extracts a resume for **$_TBD_**.
-- Caching cut cost by **_TBD_%**.
-- **_TBD_%** field accuracy (Claude), **_TBD_%** (fallback).
-- Survives provider failures via retries + fallback.
+- Runs at **$0** on free tiers; **would cost ~$0.15–0.61 per 1,000 resumes** at
+  list prices (gpt-4o-mini cheapest, Groq priciest here).
+- Caching saving is **~0% for this workload** — resumes are short and unique;
+  caching is a scale-with-shared-context lever, not a resume-extraction one.
+- **_TBD_% / _TBD_% / _TBD_%** field accuracy (Gemini / Groq / GitHub) — Milestone 7.
+- Survives provider failures via transport + validation retries and a 3-provider
+  fallback chain.

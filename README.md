@@ -6,11 +6,12 @@ over a **free-tier provider stack** — with validation-retries, transport retri
 provider fallback, and (where supported) context caching. Runs at **$0**; cost is
 reported as a hypothetical analysis at published list prices.
 
-> **Status:** Phase 2 build in progress. **Milestones 1–5 complete** (scaffold +
+> **Status:** Phase 2 build in progress. **Milestones 1–6 complete** (scaffold +
 > schema + Gemini sanity; Gemini extraction via native structured outputs; PDF
 > ingestion — multimodal + text; multi-provider — Gemini/Groq/GitHub Models behind
 > one interface; reliability — retries + validation-retries + provider fallback
-> chain). See `Phase-2-Build-Kit/BUILD-PLAN.md`.
+> chain; token accounting + hypothetical cost analysis). See
+> `Phase-2-Build-Kit/BUILD-PLAN.md`.
 
 ## Provider stack (free tiers only — no Anthropic, no paid OpenAI)
 
@@ -70,6 +71,19 @@ result = extract_with_fallback(text)                 # or is_pdf=True with a pat
 print(result.provider, result.fallback_count, result.refusals)
 resume = result.resume
 ```
+
+## Cost analysis (Milestone 6 — hypothetical; spend is $0)
+
+```python
+from resume_extractor import extract_resume_with_usage, usage_from_completion, cost_usd
+
+resume, completion = extract_resume_with_usage(text, provider="github")
+usage = usage_from_completion("github", completion)
+print(usage.input_tokens, usage.output_tokens, cost_usd("github", usage))
+```
+
+List prices are pinned in `costs.py` (verified 2026-06-18). Measured ~**$0.15–0.61
+per 1,000 resumes** depending on provider; see `BENCHMARK.md`.
 
 ## Extract from a PDF (Milestone 3)
 

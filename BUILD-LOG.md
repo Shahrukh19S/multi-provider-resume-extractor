@@ -207,3 +207,37 @@ fallback was demonstrated via a one-off script (above). `ruff` clean; full
 
 **Note:** log messages use ASCII (`->`) — an em-dash mojibake'd on the Windows
 cp1252 console (cosmetic, same family as the M3 emoji note; M9 CLI will force UTF-8).
+
+## Milestone 6 — caching + cost analysis
+
+`costs.py`: pinned list prices (per 1M tokens, **verified 2026-06-18**), a
+normalized `Usage`, `usage_from_completion` (reads Gemini `usage_metadata` and
+OpenAI-compatible `usage`), and `cost_usd` / `cost_per_1000`.
+`extract.extract_resume_with_usage` uses instructor `create_with_completion` to get
+the raw response alongside the model.
+
+**Prices:** Gemini 2.5 Flash $0.30/$2.50 (cached $0.03); Groq llama-3.3-70b
+$0.59/$0.79; gpt-4o-mini $0.15/$0.60 (cached $0.075). Sources in `costs.py`.
+
+**Live measurement (one representative resume):** Gemini 176→219 tok = $0.60/1k;
+Groq 788→185 = $0.611/1k; GitHub 428→151 = $0.155/1k. Full table in BENCHMARK §2.
+
+**Findings:**
+- **Tool-forcing inflates input tokens** — Groq/GitHub (`Mode.TOOLS`) carry the JSON
+  function schema in the prompt (Groq 788 input tok) vs Gemini native `response_schema`
+  (176). The structured-output *mode* drives token cost as much as the per-token price.
+- **gpt-4o-mini cheapest** here despite Gemini's lower input price — resumes are
+  output-heavy and Gemini's output ($2.50/M) dominates.
+- **Caching ~0 for this workload:** `cached_input_tokens=0` everywhere. The only
+  shared prefix is the ~60-token system prompt (below Gemini's implicit-cache
+  minimum) and resume bodies are unique. Honest finding per METRICS-SPEC "show the
+  token math where [caching] doesn't help"; the code still reads + bills cached
+  tokens so a cache-friendly workload would show the saving automatically.
+
+**Tests:** `test_costs.py` — cost math (incl. cached-rate billing), usage
+normalization for both response shapes, unreadable-usage raises. Pure/offline.
+`ruff` clean; full `pytest` → 25 passed.
+
+**litellm note:** still unused for dispatch; cost accounting was simpler to read
+directly from each provider's usage object than to route through litellm. litellm
+remains available if a unified cost callback is wanted later.

@@ -97,6 +97,26 @@ def extract_resume(text: str, provider: str = "gemini") -> Resume:
 
 
 @_transient_retry
+def extract_resume_with_usage(
+    text: str, provider: str = "gemini"
+) -> tuple[Resume, object]:
+    """Like `extract_resume`, but also returns the raw provider response so token
+    usage can be read (Milestone 6 cost accounting). See `costs.usage_from_completion`."""
+    client = text_client(provider)
+    resume, completion = client.chat.completions.create_with_completion(
+        model=PROVIDERS[provider].model,
+        messages=[
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": text},
+        ],
+        response_model=Resume,
+        max_retries=VALIDATION_RETRIES,
+        temperature=TEMPERATURE,
+    )
+    return resume, completion
+
+
+@_transient_retry
 def extract_resume_from_pdf(path: str | Path) -> Resume:
     """Gemini **multimodal** path (M3): send the PDF directly, no pre-extraction.
 
