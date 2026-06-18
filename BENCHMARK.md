@@ -67,7 +67,23 @@ Prices + date used: _record at Milestone 6._
 
 ## 4. Reliability (Milestone 5)
 
-Transport retries / validation-retries / fallback activations / refusals: _TBD_.
+Mechanisms wired and observed:
+- **Transport retries** (`tenacity`, exp backoff + jitter, 5 attempts, logged) on
+  429/5xx/timeouts — observed riding out live Gemini `503 UNAVAILABLE` and `429`.
+- **Validation-retries** (`instructor max_retries=2`) — re-asks on malformed output.
+- **Provider fallback chain** Gemini → Groq → GitHub Models via
+  `extract_with_fallback`, with per-attempt records (`fallback_count`, `refusals`).
+- **Refusal detection** — safety/content-block errors are classified and treated as
+  a failed attempt (never stored as data), triggering fallback.
+
+Live fallback demo (forced bad Gemini key → fall back):
+
+| Step | Provider | Outcome |
+|---|---|---|
+| 1 | gemini | **401 UNAUTHENTICATED** (non-transient → no wasted retries) → fall back |
+| 2 | groq | **200 OK** → `Resume(full_name="Jane Doe")` |
+
+Result: `provider=groq, fallback_count=1, refusals=0` — counts logged.
 
 ## Headline numbers (for README + docs)
 

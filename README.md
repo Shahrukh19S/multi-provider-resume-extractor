@@ -6,10 +6,11 @@ over a **free-tier provider stack** — with validation-retries, transport retri
 provider fallback, and (where supported) context caching. Runs at **$0**; cost is
 reported as a hypothetical analysis at published list prices.
 
-> **Status:** Phase 2 build in progress. **Milestones 1–4 complete** (scaffold +
+> **Status:** Phase 2 build in progress. **Milestones 1–5 complete** (scaffold +
 > schema + Gemini sanity; Gemini extraction via native structured outputs; PDF
 > ingestion — multimodal + text; multi-provider — Gemini/Groq/GitHub Models behind
-> one interface). See `Phase-2-Build-Kit/BUILD-PLAN.md`.
+> one interface; reliability — retries + validation-retries + provider fallback
+> chain). See `Phase-2-Build-Kit/BUILD-PLAN.md`.
 
 ## Provider stack (free tiers only — no Anthropic, no paid OpenAI)
 
@@ -55,6 +56,19 @@ Uses Gemini native structured outputs (`temperature=0`), validates into the
 extract_resume(text, provider="gemini")  # default — native structured outputs
 extract_resume(text, provider="groq")    # llama-3.3-70b-versatile (text-only)
 extract_resume(text, provider="github")  # openai/gpt-4o-mini (text-only)
+```
+
+## Reliability — retries + fallback chain (Milestone 5)
+
+```python
+from resume_extractor import extract_with_fallback
+
+# Tries Gemini -> Groq -> GitHub Models; each call already does transport retries
+# (429/5xx) and instructor validation-retries. A provider that errors or refuses
+# is skipped; a refusal is never stored as data.
+result = extract_with_fallback(text)                 # or is_pdf=True with a path
+print(result.provider, result.fallback_count, result.refusals)
+resume = result.resume
 ```
 
 ## Extract from a PDF (Milestone 3)

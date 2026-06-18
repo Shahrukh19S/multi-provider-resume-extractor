@@ -9,16 +9,24 @@ from .extract import (
 )
 from .ingest import pdf_to_text
 from .providers import PROVIDERS
+from .reliability import (
+    AllProvidersFailed,
+    FallbackResult,
+    extract_with_fallback,
+)
 from .schema import Education, Job, Resume
 
 __all__ = [
     "PROVIDERS",
+    "AllProvidersFailed",
     "Education",
+    "FallbackResult",
     "Job",
     "Resume",
     "extract_resume",
     "extract_resume_from_pdf",
     "extract_resume_from_pdf_text",
+    "extract_with_fallback",
     "pdf_to_text",
     "main",
 ]

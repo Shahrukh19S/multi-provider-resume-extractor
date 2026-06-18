@@ -17,10 +17,12 @@ accounting) is Milestone 5.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from google.genai import types
 from tenacity import (
+    before_sleep_log,
     retry,
     retry_if_exception,
     stop_after_attempt,
@@ -31,6 +33,12 @@ from .config import GEMINI_MODEL, TEMPERATURE
 from .ingest import pdf_to_text
 from .providers import PROVIDERS, gemini_raw_client, text_client
 from .schema import Resume
+
+_log = logging.getLogger("resume_extractor.extract")
+
+# instructor re-asks the model this many times on a pydantic ValidationError
+# (malformed answer) before giving up — rule #8 "validation-retries".
+VALIDATION_RETRIES = 2
 
 # The "don't hallucinate" rule lives in the prompt (BUILD-PLAN design note):
 # missing fields must come back null/empty rather than invented.
@@ -64,6 +72,7 @@ _transient_retry = retry(
     retry=retry_if_exception(_is_transient),
     wait=wait_exponential_jitter(initial=2, max=30),
     stop=stop_after_attempt(5),
+    before_sleep=before_sleep_log(_log, logging.WARNING),  # log each transport retry
     reraise=True,
 )
 
@@ -82,6 +91,7 @@ def extract_resume(text: str, provider: str = "gemini") -> Resume:
             {"role": "user", "content": text},
         ],
         response_model=Resume,
+        max_retries=VALIDATION_RETRIES,  # instructor validation-retries (rule #8)
         temperature=TEMPERATURE,
     )
 

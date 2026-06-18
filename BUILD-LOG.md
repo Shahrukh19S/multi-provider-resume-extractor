@@ -179,3 +179,31 @@ Our M1–M4 testing exhausted it, so a full `pytest` run started failing on Gemi
 - **Implication:** strongly motivates the Milestone 5 fallback chain (Gemini →
   Groq → GitHub) and "batch test runs, don't hammer." Test Gemini sparingly;
   Groq (~1k/day) and GitHub Models (~50/day) have more headroom.
+
+## Milestone 5 — reliability layer
+
+`reliability.extract_with_fallback(source, providers=("gemini","groq","github"),
+is_pdf=...)` walks the chain; each provider call already carries:
+- **transport retries** (`tenacity`, exp backoff+jitter, 5 attempts) on 429/5xx/
+  timeouts, now logged via `before_sleep_log`;
+- **validation-retries** (`instructor max_retries=2`, verified `create` accepts it)
+  to re-ask on malformed answers.
+
+On a provider error/refusal it records an `Attempt` and falls back; exposes
+`fallback_count` and `refusals`. **Refusal detection** = `is_refusal()` matches
+safety/content-block markers; a refusal is a failed attempt, never stored as data.
+
+**Live fallback demo (acceptance):** forced a bad `GEMINI_API_KEY` in-process →
+Gemini `401 UNAUTHENTICATED` (non-transient, so no wasted retries) → logged
+fallback → **Groq 200 OK** → `Resume(full_name="Jane Doe")`. Counts:
+`provider=groq, fallback_count=1, refusals=0` (logged). Auth errors correctly do
+NOT trigger transport retries (only 429/5xx/timeouts do).
+
+**Tests:** `test_reliability.py` — fallback-to-second, refusal-triggers-fallback,
+all-providers-failed raises, first-success-no-fallback, and the `is_refusal`
+classifier. All **monkeypatched / offline** (deterministic, no quota use); the live
+fallback was demonstrated via a one-off script (above). `ruff` clean; full
+`pytest` → 19 passed.
+
+**Note:** log messages use ASCII (`->`) — an em-dash mojibake'd on the Windows
+cp1252 console (cosmetic, same family as the M3 emoji note; M9 CLI will force UTF-8).
