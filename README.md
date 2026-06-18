@@ -34,7 +34,7 @@ scale").
 | **Fallback** | `llama-3.3-70b-versatile` (Groq) | `Mode.JSON` | text-only (pypdf) |
 | **Third** | `openai/gpt-4o-mini` (GitHub Models) | `Mode.TOOLS` | text-only (pypdf) |
 
-Keys live in `.env`: `GEMINI_API_KEY`, `GROQ_API_KEY`, `GITHUB_MODELS_TOKEN`.
+Keys live in `.env.example`: `GEMINI_API_KEY`, `GROQ_API_KEY`, `GITHUB_MODELS_TOKEN`.
 There is intentionally **no `ANTHROPIC_API_KEY`**.
 
 ---
