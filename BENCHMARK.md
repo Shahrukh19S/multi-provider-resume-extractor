@@ -6,11 +6,13 @@ not bolted on at the end.
 
 ## Pinned models (record the exact IDs used) — free-tier stack, verified 2026-06-18
 
-| Role | Model ID | Structured outputs | Multimodal PDF | temperature=0 |
+| Role | Model ID | Structured-output mode (instructor) | Multimodal PDF | temperature=0 |
 |---|---|---|---|---|
-| Primary (Gemini) | `gemini-2.5-flash` | native | yes (direct) | yes |
-| Fallback (Groq) | `llama-3.3-70b-versatile` | via instructor | no (text-only) | yes |
-| Third (GitHub Models) | `openai/gpt-4o-mini` | native (OpenAI-compatible) | no (text-only) | yes |
+| Primary (Gemini) | `gemini-2.5-flash` | native SO (`Mode.JSON`, `response_schema`) | yes (direct) | yes |
+| Fallback (Groq) | `llama-3.3-70b-versatile` | tool-forcing (`Mode.TOOLS`), OpenAI-compat | no (text-only) | yes |
+| Third (GitHub Models) | `openai/gpt-4o-mini` | tool-forcing (`Mode.TOOLS`), OpenAI-compat | no (text-only) | yes |
+
+All three verified live behind one `extract_resume(text, provider=...)` signature.
 
 > Cost is **hypothetical** — actual spend is $0 on free tiers (see METRICS-SPEC §2).
 

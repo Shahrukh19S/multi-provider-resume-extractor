@@ -17,11 +17,10 @@ from __future__ import annotations
 # --- PRIMARY: Google Gemini (free AI Studio key) -----------------------------
 # Native structured outputs + reads PDFs directly (multimodal).
 GEMINI_MODEL = "gemini-2.5-flash"
-GEMINI_LITELLM = "gemini/gemini-2.5-flash"  # litellm provider-prefixed form
 
 # --- FALLBACK: Groq (free, fast, open) — text-only ---------------------------
 GROQ_MODEL = "llama-3.3-70b-versatile"
-GROQ_LITELLM = "groq/llama-3.3-70b-versatile"
+GROQ_ENDPOINT = "https://api.groq.com/openai/v1"  # OpenAI-compatible base URL
 
 # --- THIRD: GitHub Models (free w/ PAT) — OpenAI-compatible, text-only --------
 GITHUB_MODELS_ENDPOINT = "https://models.github.ai/inference"

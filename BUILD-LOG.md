@@ -137,3 +137,45 @@ text-only providers. Both miss skills rendered as graphics (proficiency bars).
   `multi_column_resume_sample1.pdf` are byte-identical (same Byungjin Park resume).
 - **Privacy:** `tests/sample_resumes/*.pdf` is git-ignored (real resumes are
   personal data); only the folder README is tracked.
+
+## Milestone 4 — Groq + GitHub Models behind one interface
+
+`providers.py`: a `ProviderSpec` registry + cached client factory. All three
+providers go through `instructor`, so `extract.extract_resume(text, provider=...)`
+is one signature — swap by name. Confirmed live: Gemini, Groq, and GitHub Models
+each extract the same sample correctly.
+
+**Verification (rule #3):** Groq base `https://api.groq.com/openai/v1`, model
+`llama-3.3-70b-versatile` is a current production model (not deprecated). GitHub
+Models base `https://models.github.ai/inference`, model `openai/gpt-4o-mini`,
+OpenAI-compatible; structured outputs supported on gpt-4o-mini+.
+
+**Decisions:**
+- **Modes (rule #2):** Gemini uses native structured outputs (`Mode.JSON` →
+  `response_schema`). Groq + GitHub Models are wired with `instructor.from_openai`
+  in `Mode.TOOLS` (function-calling / tool-forcing) — the sanctioned fallback,
+  reliable across both OpenAI-compatible endpoints (Llama's json_schema support is
+  uneven; tool-calling is dependable). Recorded in BENCHMARK.md.
+- **instructor.from_openai over litellm for dispatch:** chose explicit
+  OpenAI-compatible clients (clear base_url + per-provider mode) rather than litellm
+  routing. `litellm` stays a dependency for later cost/token accounting (M6) and
+  possible Router use; not used for dispatch here. (Minor deviation from SETUP's
+  "litellm + instructor" framing — flagged.)
+- Text-only providers reuse the M3 pypdf text path for PDFs
+  (`extract_resume_from_pdf_text(path, provider=...)`); only Gemini reads PDFs
+  directly.
+
+**Tests:** `test_providers.py` parametrizes over all providers (skips per missing
+key) + an unknown-provider `ValueError` check (no network).
+
+**Big free-tier finding:** Gemini `gemini-2.5-flash` free tier is **~20 requests
+PER DAY** per project (`GenerateRequestsPerDayPerProjectPerModel-FreeTier`,
+quotaValue 20) — far below the "1,500/day" figure floating around in blog posts.
+Our M1–M4 testing exhausted it, so a full `pytest` run started failing on Gemini
+429s. A 30s retry can't clear a *daily* cap.
+- **Fix:** live tests now route Gemini/Groq/GitHub calls through
+  `tests/live_utils.call_or_skip`, which **skips** (not fails) on transient /
+  rate-limit / quota / 5xx errors — correct for a free-tier-dependent suite.
+- **Implication:** strongly motivates the Milestone 5 fallback chain (Gemini →
+  Groq → GitHub) and "batch test runs, don't hammer." Test Gemini sparingly;
+  Groq (~1k/day) and GitHub Models (~50/day) have more headroom.

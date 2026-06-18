@@ -1,33 +1,24 @@
-"""Extraction calls.
+"""Extraction calls — one interface over multiple providers.
 
-Milestone 2 — single-provider extraction from **text** via Gemini native
-structured outputs (`instructor` over google-genai, `Mode.JSON`).
-Milestone 3 — PDF ingestion, two paths:
-  * `extract_resume_from_pdf(path)` — Gemini **multimodal**: send the PDF directly.
-  * `extract_resume_from_pdf_text(path)` — pypdf text extraction → text path
-    (what text-only providers like Groq / GitHub Models will use in M4).
+- `extract_resume(text, provider=...)` — text extraction via any provider
+  (gemini / groq / github), same signature, swap by name (Milestones 2 & 4).
+- `extract_resume_from_pdf(path)` — Gemini **multimodal**: send the PDF directly
+  (Milestone 3; Gemini only — it's the one provider that reads PDFs natively).
+- `extract_resume_from_pdf_text(path, provider=...)` — pypdf text → text path
+  (Milestone 3; the path text-only providers Groq / GitHub Models use).
 
-All calls use temperature=0 and the pinned model (rules #4/#5) and prefer native
-structured outputs (rule #2). A minimal `tenacity` retry guards against transient
-transport errors — 429 rate limits and 5xx/unavailable/timeouts, common on free
-tiers (CHANGE-BRIEF #6, rule #8); the full reliability layer (provider fallback
-chain, validation-retry/refusal accounting) is Milestone 5.
-
-Design note: the text path goes through `instructor` (unifies providers + gives
-validation-retries). The Gemini *multimodal* path calls google-genai directly with
-a Pydantic `response_schema` — still native structured outputs, but instructor's
-multimodal genai wrapper isn't cleanly exposed in this version, so the direct SDK
-call is the controllable, verifiable choice.
+All calls use temperature=0 and pinned model IDs (rules #4/#5) and prefer native
+structured outputs, falling back to tool-forcing per provider (rule #2; see
+`providers.py`). A minimal `tenacity` retry guards transient transport errors —
+429 rate limits and 5xx/timeouts, common on free tiers (CHANGE-BRIEF #6, rule #8).
+The full reliability layer (provider fallback chain, validation-retry/refusal
+accounting) is Milestone 5.
 """
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
-import instructor
-from dotenv import load_dotenv
-from google import genai
 from google.genai import types
 from tenacity import (
     retry,
@@ -38,6 +29,7 @@ from tenacity import (
 
 from .config import GEMINI_MODEL, TEMPERATURE
 from .ingest import pdf_to_text
+from .providers import PROVIDERS, gemini_raw_client, text_client
 from .schema import Resume
 
 # The "don't hallucinate" rule lives in the prompt (BUILD-PLAN design note):
@@ -48,37 +40,6 @@ SYSTEM_PROMPT = (
     "If a field is not stated, leave it null or empty — never guess, infer, or "
     "invent values. Preserve dates exactly as written (e.g. 'Present', '2019')."
 )
-
-_raw_client: genai.Client | None = None
-_instructor_client: instructor.Instructor | None = None
-
-
-def _api_key() -> str:
-    load_dotenv()
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "GEMINI_API_KEY is not set. Add it to .env (see .env.example)."
-        )
-    return api_key
-
-
-def _genai_client() -> genai.Client:
-    """Cached raw google-genai client (used for the multimodal PDF path)."""
-    global _raw_client
-    if _raw_client is None:
-        _raw_client = genai.Client(api_key=_api_key())
-    return _raw_client
-
-
-def _gemini_client() -> instructor.Instructor:
-    """Cached instructor-wrapped Gemini client in native structured-output mode."""
-    global _instructor_client
-    if _instructor_client is None:
-        _instructor_client = instructor.from_genai(
-            _genai_client(), mode=instructor.Mode.JSON
-        )
-    return _instructor_client
 
 
 def _is_transient(exc: BaseException) -> bool:
@@ -108,11 +69,14 @@ _transient_retry = retry(
 
 
 @_transient_retry
-def extract_resume(text: str) -> Resume:
-    """Extract a validated `Resume` from raw resume *text* using Gemini (M2)."""
-    client = _gemini_client()
+def extract_resume(text: str, provider: str = "gemini") -> Resume:
+    """Extract a validated `Resume` from resume *text* using any provider.
+
+    `provider` is one of "gemini", "groq", "github" — same call, swap by name.
+    """
+    client = text_client(provider)
     return client.chat.completions.create(
-        model=GEMINI_MODEL,
+        model=PROVIDERS[provider].model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": text},
@@ -127,9 +91,10 @@ def extract_resume_from_pdf(path: str | Path) -> Resume:
     """Gemini **multimodal** path (M3): send the PDF directly, no pre-extraction.
 
     Best for messy multi-column layouts and scanned/image PDFs. Uses Gemini's
-    native structured outputs (`response_schema=Resume`).
+    native structured outputs (`response_schema=Resume`). Gemini-only — text-only
+    providers must use `extract_resume_from_pdf_text`.
     """
-    client = _genai_client()
+    client = gemini_raw_client()
     pdf_bytes = Path(path).read_bytes()
     response = client.models.generate_content(
         model=GEMINI_MODEL,
@@ -151,9 +116,9 @@ def extract_resume_from_pdf(path: str | Path) -> Resume:
     return Resume.model_validate_json(response.text or "")
 
 
-def extract_resume_from_pdf_text(path: str | Path) -> Resume:
-    """Text path (M3): pypdf text extraction → the M2 text extractor.
+def extract_resume_from_pdf_text(path: str | Path, provider: str = "gemini") -> Resume:
+    """Text path (M3): pypdf text extraction → the text extractor for `provider`.
 
-    This is the path text-only providers (Groq, GitHub Models) will reuse in M4.
+    This is the path text-only providers (Groq, GitHub Models) use for PDFs.
     """
-    return extract_resume(pdf_to_text(path))
+    return extract_resume(pdf_to_text(path), provider=provider)

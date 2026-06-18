@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
+from live_utils import call_or_skip
 
 from resume_extractor.extract import extract_resume_from_pdf
 from resume_extractor.ingest import pdf_to_text
@@ -49,6 +50,6 @@ def test_text_path_extracts_text():
 @needs_key
 def test_gemini_multimodal_pdf_extracts():
     """Gemini multimodal path returns a validated Resume from a real PDF."""
-    resume = extract_resume_from_pdf(PDFS[0])
+    resume = call_or_skip(extract_resume_from_pdf, PDFS[0])
     assert isinstance(resume, Resume)
     assert resume.full_name and resume.full_name.strip()

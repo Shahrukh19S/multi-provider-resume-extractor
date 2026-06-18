@@ -6,10 +6,10 @@ over a **free-tier provider stack** — with validation-retries, transport retri
 provider fallback, and (where supported) context caching. Runs at **$0**; cost is
 reported as a hypothetical analysis at published list prices.
 
-> **Status:** Phase 2 build in progress. **Milestones 1–3 complete** (scaffold +
-> schema + Gemini sanity; single-provider extraction via Gemini native structured
-> outputs; PDF ingestion — multimodal + text paths). See
-> `Phase-2-Build-Kit/BUILD-PLAN.md`.
+> **Status:** Phase 2 build in progress. **Milestones 1–4 complete** (scaffold +
+> schema + Gemini sanity; Gemini extraction via native structured outputs; PDF
+> ingestion — multimodal + text; multi-provider — Gemini/Groq/GitHub Models behind
+> one interface). See `Phase-2-Build-Kit/BUILD-PLAN.md`.
 
 ## Provider stack (free tiers only — no Anthropic, no paid OpenAI)
 
@@ -48,6 +48,14 @@ print(resume.full_name, resume.skills)
 
 Uses Gemini native structured outputs (`temperature=0`), validates into the
 `Resume` pydantic model, and retries on transient errors (429/5xx).
+
+**Swap providers with the same call (Milestone 4):**
+
+```python
+extract_resume(text, provider="gemini")  # default — native structured outputs
+extract_resume(text, provider="groq")    # llama-3.3-70b-versatile (text-only)
+extract_resume(text, provider="github")  # openai/gpt-4o-mini (text-only)
+```
 
 ## Extract from a PDF (Milestone 3)
 

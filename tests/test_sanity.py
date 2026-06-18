@@ -10,6 +10,7 @@ import os
 
 import pytest
 from dotenv import load_dotenv
+from live_utils import call_or_skip
 
 from resume_extractor.sanity import hello_gemini
 
@@ -23,6 +24,6 @@ requires_key = pytest.mark.skipif(
 
 @requires_key
 def test_gemini_responds():
-    reply = hello_gemini()
+    reply = call_or_skip(hello_gemini)
     assert isinstance(reply, str)
     assert reply.strip(), "Gemini returned an empty response"

@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
+from live_utils import call_or_skip
 
 from resume_extractor.extract import extract_resume
 from resume_extractor.schema import Resume
@@ -29,7 +30,7 @@ SAMPLE = (Path(__file__).parent / "data" / "sample_resume.txt").read_text(
 
 @requires_key
 def test_extracts_known_sample():
-    resume = extract_resume(SAMPLE)
+    resume = call_or_skip(extract_resume, SAMPLE)
 
     assert isinstance(resume, Resume)
 

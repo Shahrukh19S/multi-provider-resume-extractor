@@ -8,9 +8,11 @@ from .extract import (
     extract_resume_from_pdf_text,
 )
 from .ingest import pdf_to_text
+from .providers import PROVIDERS
 from .schema import Education, Job, Resume
 
 __all__ = [
+    "PROVIDERS",
     "Education",
     "Job",
     "Resume",
