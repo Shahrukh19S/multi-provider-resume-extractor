@@ -27,3 +27,4 @@ tests/sample_resumes/*.pdf
 eval/cache/
 eval/gold_pdf/
 eval/REPORT.md
+eval/latency.json

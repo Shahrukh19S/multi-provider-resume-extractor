@@ -6,12 +6,12 @@ over a **free-tier provider stack** — with validation-retries, transport retri
 provider fallback, and (where supported) context caching. Runs at **$0**; cost is
 reported as a hypothetical analysis at published list prices.
 
-> **Status:** Phase 2 build in progress. **Milestones 1–7 complete** (scaffold +
+> **Status:** Phase 2 build in progress. **Milestones 1–8 complete** (scaffold +
 > schema + Gemini sanity; Gemini extraction via native structured outputs; PDF
 > ingestion — multimodal + text; multi-provider — Gemini/Groq/GitHub Models behind
 > one interface; reliability — retries + validation-retries + provider fallback
-> chain; token accounting + hypothetical cost analysis; eval/accuracy harness). See
-> `Phase-2-Build-Kit/BUILD-PLAN.md`.
+> chain; token accounting + hypothetical cost analysis; eval/accuracy harness;
+> benchmark write-up). See `BENCHMARK.md` and `Phase-2-Build-Kit/BUILD-PLAN.md`.
 
 ## Provider stack (free tiers only — no Anthropic, no paid OpenAI)
 

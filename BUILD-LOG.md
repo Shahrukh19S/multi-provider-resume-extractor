@@ -276,3 +276,27 @@ for spot-check.
 
 **Quota note:** spent ~4 Gemini calls (multimodal comparison) + a Groq cost
 re-measure this milestone. Reruns without `--gemini` cost zero Gemini.
+
+## Milestone 8 — benchmark write-up
+
+Gold **verified** by the user (line-by-line vs source PDFs, no corrections). Re-ran
+scoring from cache (no new API calls) → FINAL accuracy in BENCHMARK §1, with the
+honest provenance caveat: PDF gold was `github_text`-seeded then human-verified, so
+`github_text` is at ceiling by construction and the meaningful comparison is
+`groq_text` (85.4%) vs `gemini_multimodal` (80.4%) — itself mildly text-path-biased.
+Per-field: Gemini-multimodal wins **companies** (85% vs 73%, reads layout), Groq-text
+wins **skills** (75% vs 53%, icon-bar resume defeats multimodal).
+
+**Latency (`eval/latency.py`, new):** text path, 8 samples each — **Groq median
+0.67s (p95 2.25s)** vs **GitHub 3.93s (p95 4.96s)**: Groq ~6× faster. Gemini latency
+**deferred** — the ~20/day quota was spent by the day's runs, so timed PDF calls
+429'd (harness skips gracefully; rerun `eval/latency.py --gemini` on a fresh day).
+
+**Consolidated** accuracy + cost + latency into one summary table at the top of
+BENCHMARK.md (METRICS-SPEC §5 format) + headline one-liners.
+
+**Known limitation (noted for later):** the transport retry treats a *daily*-quota
+429 the same as a transient one, so it burns its full backoff (~60s) before giving
+up on an exhausted-for-the-day Gemini call. A future tweak could parse the quota
+metric / `RetryInfo` to fail fast on daily caps. Left as-is for now (correct, just
+slow on an exhausted day).

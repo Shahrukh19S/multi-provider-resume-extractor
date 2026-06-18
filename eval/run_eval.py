@@ -157,7 +157,7 @@ def run_pdf_comparison(pdfs: list[Path]) -> dict[str, list[FieldScores]]:
     """Multimodal (Gemini) vs text (Groq/GitHub) on real PDFs, vs bootstrapped gold."""
     labels = ["gemini_multimodal", "groq_text", "github_text"]
     per: dict[str, list[FieldScores]] = {k: [] for k in labels}
-    print("\n== PDF comparison (vs bootstrapped gold — preliminary) ==")
+    print("\n== PDF comparison (vs human-verified gold) ==")
     for pdf in pdfs:
         gold_path = GOLD_PDF / f"{pdf.stem}.json"
         if not gold_path.exists():
@@ -196,13 +196,14 @@ def main() -> None:
             "# Eval report (Milestone 7)",
             "",
             "> Text set = synthetic resumes with **exact** gold (trustworthy).",
-            "> PDF section is **preliminary** — scored vs *bootstrapped* gold awaiting",
-            "> spot-check/correction in `eval/gold_pdf/`.",
+            "> PDF gold was github_text-seeded then **human-verified**, so github_text",
+            "> scores near-ceiling by construction — the meaningful comparisons are",
+            "> groq_text and gemini_multimodal against the verified gold.",
             "",
             _report_block(
                 "Text set — field accuracy per provider (exact gold)", text_scores
             ),
-            _report_block("Real PDFs — preliminary (vs bootstrapped gold)", pdf_scores),
+            _report_block("Real PDFs — vs human-verified gold", pdf_scores),
         ]
     )
     (ROOT / "REPORT.md").write_text(report, encoding="utf-8")
