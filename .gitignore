@@ -21,3 +21,9 @@ Phase-2-Build-Kit/
 # Real resumes are personal data — keep PDFs local on a public repo.
 # Force-add a clearly-synthetic sample if you want one committed.
 tests/sample_resumes/*.pdf
+
+# Eval: cached predictions + bootstrapped labels from real resumes may contain PII.
+# (The synthetic eval set under eval/text_resumes/ and eval/gold/ IS committed.)
+eval/cache/
+eval/gold_pdf/
+eval/REPORT.md

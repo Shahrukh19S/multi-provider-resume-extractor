@@ -1,0 +1,15 @@
+{
+  "full_name": "Maria Gonzalez",
+  "email": "maria.gonzalez@example.com",
+  "phone": "(512) 555-0190",
+  "location": "Austin, TX",
+  "summary": "Data engineer with 5 years building cloud ETL pipelines.",
+  "skills": ["Python", "Spark", "AWS", "Airflow", "SQL"],
+  "experience": [
+    {"company": "Brightwave Analytics", "title": "Data Engineer", "start_date": "March 2021", "end_date": "Present", "highlights": ["Built streaming pipelines on Kinesis.", "Cut nightly batch time by 35%."]},
+    {"company": "NorthPeak", "title": "Junior Data Engineer", "start_date": "2019", "end_date": "2021", "highlights": ["Maintained Airflow DAGs."]}
+  ],
+  "education": [
+    {"institution": "University of Texas at Austin", "degree": "B.S.", "field_of_study": "Information Systems", "start_year": 2015, "end_year": 2019}
+  ]
+}

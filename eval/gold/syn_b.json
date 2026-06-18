@@ -1,0 +1,14 @@
+{
+  "full_name": "David Okafor",
+  "email": "davidokafor@example.com",
+  "phone": null,
+  "location": null,
+  "summary": "Frontend developer focused on accessible React applications.",
+  "skills": ["JavaScript", "TypeScript", "React", "CSS", "Jest"],
+  "experience": [
+    {"company": "Lumen Labs", "title": "Frontend Developer", "start_date": "Jan 2022", "end_date": "Present", "highlights": ["Led migration to TypeScript across the component library.", "Improved Lighthouse accessibility score to 98."]}
+  ],
+  "education": [
+    {"institution": "Boston University", "degree": "B.A.", "field_of_study": "Computer Science", "start_year": 2018, "end_year": 2022}
+  ]
+}

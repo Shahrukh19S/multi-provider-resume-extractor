@@ -1,0 +1,21 @@
+Maria Gonzalez
+Austin, TX | maria.gonzalez@example.com | (512) 555-0190
+
+Summary
+Data engineer with 5 years building cloud ETL pipelines.
+
+Skills
+Python, Spark, AWS, Airflow, SQL
+
+Experience
+Data Engineer, Brightwave Analytics, Austin, TX
+March 2021 - Present
+- Built streaming pipelines on Kinesis.
+- Cut nightly batch time by 35%.
+
+Junior Data Engineer, NorthPeak, Remote
+2019 - 2021
+- Maintained Airflow DAGs.
+
+Education
+B.S. Information Systems, University of Texas at Austin, 2015 - 2019

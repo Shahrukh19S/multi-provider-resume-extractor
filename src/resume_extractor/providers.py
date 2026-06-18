@@ -59,7 +59,10 @@ PROVIDERS: dict[str, ProviderSpec] = {
         GROQ_MODEL,
         "GROQ_API_KEY",
         GROQ_ENDPOINT,
-        instructor.Mode.TOOLS,  # function-calling (tool-forcing) — reliable on Llama
+        # JSON mode (native-ish structured outputs). Switched from TOOLS after Llama's
+        # function-calling intermittently 400'd ("failed to call a function");
+        # Mode.JSON is reliable here and is closer to the rule-#2 native-SO preference.
+        instructor.Mode.JSON,
         False,
     ),
     "github": ProviderSpec(

@@ -1,0 +1,20 @@
+Priya Nair
+Seattle, WA | priya.nair@example.com | 206-555-0123
+
+Summary
+Product designer with 7 years across B2B SaaS.
+
+Skills
+Figma, User Research, Prototyping, Design Systems
+
+Experience
+Senior Product Designer, Cobalt Software, Seattle, WA
+2020 - Present
+- Owned the design system used by 40 engineers.
+
+Product Designer, Tidepool, San Francisco, CA
+2017 - 2020
+- Ran usability studies for the onboarding flow.
+
+Education
+B.Des Interaction Design, Rhode Island School of Design, 2013 - 2017

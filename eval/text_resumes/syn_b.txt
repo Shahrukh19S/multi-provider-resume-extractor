@@ -1,0 +1,17 @@
+David Okafor
+davidokafor@example.com
+
+Professional Summary
+Frontend developer focused on accessible React applications.
+
+Technical Skills
+JavaScript, TypeScript, React, CSS, Jest
+
+Work Experience
+Frontend Developer, Lumen Labs
+Jan 2022 - Present
+- Led migration to TypeScript across the component library.
+- Improved Lighthouse accessibility score to 98.
+
+Education
+B.A. Computer Science, Boston University, 2018 - 2022

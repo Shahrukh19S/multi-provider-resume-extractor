@@ -241,3 +241,38 @@ normalization for both response shapes, unreadable-usage raises. Pure/offline.
 **litellm note:** still unused for dispatch; cost accounting was simpler to read
 directly from each provider's usage object than to route through litellm. litellm
 remains available if a unified cost callback is wanted later.
+
+## Milestone 7 — eval / accuracy
+
+`scoring.py` (pure, unit-tested): normalized scalar match (name/email/phone/
+location), set-F1 for skills / companies / institutions, overall = mean.
+`eval/run_eval.py`: quota-aware runner — Gemini OFF by default (reserved for the PDF
+multimodal comparison), every prediction cached to `eval/cache/` so reruns don't
+re-spend quota. Synthetic text set (`eval/text_resumes/` + exact `eval/gold/`,
+committed, no PII); real-PDF gold bootstrapped into `eval/gold_pdf/` (git-ignored)
+for spot-check.
+
+**Results:**
+- **Text set (exact gold): Groq 100%, GitHub 100% (4/4 each)** — trustworthy.
+- **Real PDFs: PRELIMINARY** vs bootstrapped gold (github_text ~100% is *circular* —
+  GitHub seeded most labels; groq_text ~85%, gemini_multimodal ~80% reflect
+  disagreement with unverified labels, not true error). Final numbers await label
+  correction in `eval/gold_pdf/`.
+
+**Findings / decisions:**
+- **Groq `Mode.TOOLS` → `Mode.JSON`.** Tool-calling intermittently hard-400'd
+  ("failed to call a function", not a retryable ValidationError) on some inputs
+  (e.g. `syn_d`). `Mode.JSON` is reliable (and rule-#2-preferred). **Cost trade-off:**
+  JSON mode injects the schema as prompt text → **2615** input tok vs **788** under
+  TOOLS (~3×, $1.94 vs $0.611 / 1k). Kept JSON for reliability; M5 fallback would
+  catch a TOOLS failure anyway. BENCHMARK §2 updated to the JSON numbers.
+- **GitHub Models has a small free-tier input cap** — the largest PDF
+  (`clean_resumes_sample3`) 413'd (`tokens_limit_reached`); Groq's 131k context
+  handles it. Bootstrap now seeds via GitHub → Groq → Gemini in order.
+- **Synthetic set is the methodological anchor** — exact gold by construction means
+  no bootstrap circularity; real PDFs add realism once labels are corrected.
+
+**Tests:** `test_scoring.py` (6, offline). ruff clean.
+
+**Quota note:** spent ~4 Gemini calls (multimodal comparison) + a Groq cost
+re-measure this milestone. Reruns without `--gemini` cost zero Gemini.

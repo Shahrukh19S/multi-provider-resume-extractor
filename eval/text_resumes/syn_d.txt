@@ -1,0 +1,21 @@
+Tomás Ortega
+Miami, FL | tomas.ortega@example.com | (305) 555-0177
+
+Summary
+Site reliability engineer; Kubernetes and observability.
+
+Skills
+Kubernetes, Go, Prometheus, Terraform, Linux
+
+Experience
+Staff SRE, Vela Payments, Miami, FL
+2021 - Present
+- Reduced p99 latency 22% via autoscaling tuning.
+
+SRE, Harbor Networks, Remote
+2018 - 2021
+- Built Grafana dashboards for 30 services.
+
+DevOps Engineer, Quanta, Austin, TX
+2016 - 2018
+- Automated CI/CD with Jenkins.

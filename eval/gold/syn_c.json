@@ -1,0 +1,15 @@
+{
+  "full_name": "Priya Nair",
+  "email": "priya.nair@example.com",
+  "phone": "206-555-0123",
+  "location": "Seattle, WA",
+  "summary": "Product designer with 7 years across B2B SaaS.",
+  "skills": ["Figma", "User Research", "Prototyping", "Design Systems"],
+  "experience": [
+    {"company": "Cobalt Software", "title": "Senior Product Designer", "start_date": "2020", "end_date": "Present", "highlights": ["Owned the design system used by 40 engineers."]},
+    {"company": "Tidepool", "title": "Product Designer", "start_date": "2017", "end_date": "2020", "highlights": ["Ran usability studies for the onboarding flow."]}
+  ],
+  "education": [
+    {"institution": "Rhode Island School of Design", "degree": "B.Des", "field_of_study": "Interaction Design", "start_year": 2013, "end_year": 2017}
+  ]
+}

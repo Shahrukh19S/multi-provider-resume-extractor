@@ -1,0 +1,14 @@
+{
+  "full_name": "Tomás Ortega",
+  "email": "tomas.ortega@example.com",
+  "phone": "(305) 555-0177",
+  "location": "Miami, FL",
+  "summary": "Site reliability engineer; Kubernetes and observability.",
+  "skills": ["Kubernetes", "Go", "Prometheus", "Terraform", "Linux"],
+  "experience": [
+    {"company": "Vela Payments", "title": "Staff SRE", "start_date": "2021", "end_date": "Present", "highlights": ["Reduced p99 latency 22% via autoscaling tuning."]},
+    {"company": "Harbor Networks", "title": "SRE", "start_date": "2018", "end_date": "2021", "highlights": ["Built Grafana dashboards for 30 services."]},
+    {"company": "Quanta", "title": "DevOps Engineer", "start_date": "2016", "end_date": "2018", "highlights": ["Automated CI/CD with Jenkins."]}
+  ],
+  "education": []
+}
