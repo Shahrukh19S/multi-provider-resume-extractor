@@ -1,7 +1,7 @@
 # Build log
 
 Short running log of decisions, deviations, and surprises (feeds the README
-"production decision log" and the BRING-BACK-CHECKLIST).
+"production decision log").
 
 ## Milestone 1 — scaffold + schema + sanity
 
@@ -13,18 +13,17 @@ Short running log of decisions, deviations, and surprises (feeds the README
   Dev: pytest 9.1.0, ruff 0.15.17.
 
 **Decisions**
-- **PDF library deferred to Milestone 3.** SETUP.md §2 lists `pypdf` in the
-  install step, but BUILD-PLAN Milestone 3 says to choose the ingestion approach
-  during the build (text-extraction vs multimodal, measure the trade-off). Kept
-  M1 deps minimal; will add the chosen library at M3.
+- **PDF library deferred to Milestone 3.** The ingestion approach
+  (text-extraction vs multimodal) is chosen during the build at Milestone 3 so the
+  trade-off can be measured. Kept M1 deps minimal; added the chosen library at M3.
 - **`email` typed as `str | None`, not `EmailStr`.** Real resumes carry mangled /
   OCR-damaged emails; rejecting an entire record over a bad address loses good
   data. Capture as string, validate downstream.
 - **`extra="forbid"` on all schema models** so the model can't smuggle in
   hallucinated keys, and so the JSON schema is clean for native structured
   outputs at M2.
-- Sanity call uses the official **anthropic SDK directly** (matches SETUP §5).
-  The instructor + native-structured-output path is Milestone 2 work.
+- Sanity call uses the official **anthropic SDK directly** (a minimal connectivity
+  check). The instructor + native-structured-output path is Milestone 2 work.
 
 **Live-docs verification (before writing any provider call)**
 - `claude-sonnet-4-6` (primary) and `claude-haiku-4-5-20251001` (cheap): both
@@ -43,11 +42,11 @@ Short running log of decisions, deviations, and surprises (feeds the README
   check is wired but not yet executed. Add a key to `.env` and run
   `uv run pytest` (or `uv run python -m resume_extractor.sanity`) to confirm.
 
-## Provider pivot — Anthropic → free-tier stack (CHANGE-BRIEF.md)
+## Provider pivot — Anthropic → free-tier stack
 
-The user has Claude Max but no paid API access; pivoted to build entirely on free
-tiers at $0. **Anthropic removed; there is no `ANTHROPIC_API_KEY` and must not be
-one.** Stack is now Gemini Flash (primary) → Groq Llama 3.3 70B → GitHub Models
+The project targets free provider tiers only; no paid API access is assumed.
+Pivoted to build entirely on free tiers at $0. **Anthropic removed; there is no
+`ANTHROPIC_API_KEY` and must not be one.** Stack is now Gemini Flash (primary) → Groq Llama 3.3 70B → GitHub Models
 GPT-family. The schema, milestones, and reliability/eval/benchmark design are
 unchanged — only provider identities and a few model strings differ.
 
@@ -91,7 +90,8 @@ experience/education populated, no hallucination. `uv run pytest` → 8 passed,
   GenAI provider, `Mode.JSON` selects the same native-SO handler. Switched to
   `Mode.JSON` (no deprecation warning).
 - **Free-tier 429s are real.** Running the sanity + extraction live tests
-  back-to-back tripped a transient rate limit. Per CHANGE-BRIEF #6, added a minimal
+  back-to-back tripped a transient rate limit. Wired transport retries early (the
+  free-tier guidance): added a minimal
   `tenacity` retry (exponential backoff + jitter, 5 attempts) scoped to
   rate-limit/quota errors. The full reliability layer (provider fallback chain,
   validation-retry/refusal accounting + counts) remains Milestone 5.
@@ -127,9 +127,9 @@ text-only providers. Both miss skills rendered as graphics (proficiency bars).
 - **Transient 503 UNAVAILABLE** ("high demand") surfaced — the M2 retry only
   matched 429. Broadened the predicate (`_is_transient`) to 429 + 5xx /
   unavailable / overloaded / timeouts (rule #8). Re-ran green.
-- **Free-tier RPM 429** when firing ~8 extractions back-to-back — confirms
-  CHANGE-BRIEF "don't hammer / batch test runs." Retry helps; spacing calls helps
-  more. Full fallback chain is M5.
+- **Free-tier RPM 429** when firing ~8 extractions back-to-back — confirms the
+  free-tier guidance to batch test runs and not hammer the APIs. Retry helps;
+  spacing calls helps more. Full fallback chain is M5.
 - **Windows console `UnicodeEncodeError`** printing an emoji (📱) from a resume to
   cp1252 stdout — a *diagnostic-print* issue, not in library code. Flag for the M9
   CLI: force UTF-8 stdout on Windows.
@@ -159,8 +159,8 @@ OpenAI-compatible; structured outputs supported on gpt-4o-mini+.
 - **instructor.from_openai over litellm for dispatch:** chose explicit
   OpenAI-compatible clients (clear base_url + per-provider mode) rather than litellm
   routing. `litellm` stays a dependency for later cost/token accounting (M6) and
-  possible Router use; not used for dispatch here. (Minor deviation from SETUP's
-  "litellm + instructor" framing — flagged.)
+  possible Router use; not used for dispatch here. (Minor deviation from the
+  original "litellm + instructor" framing — flagged.)
 - Text-only providers reuse the M3 pypdf text path for PDFs
   (`extract_resume_from_pdf_text(path, provider=...)`); only Gemini reads PDFs
   directly.
@@ -230,9 +230,9 @@ Groq 788→185 = $0.611/1k; GitHub 428→151 = $0.155/1k. Full table in BENCHMAR
   output-heavy and Gemini's output ($2.50/M) dominates.
 - **Caching ~0 for this workload:** `cached_input_tokens=0` everywhere. The only
   shared prefix is the ~60-token system prompt (below Gemini's implicit-cache
-  minimum) and resume bodies are unique. Honest finding per METRICS-SPEC "show the
-  token math where [caching] doesn't help"; the code still reads + bills cached
-  tokens so a cache-friendly workload would show the saving automatically.
+  minimum) and resume bodies are unique. Honest finding — show the token math where
+  caching doesn't help; the code still reads + bills cached tokens so a
+  cache-friendly workload would show the saving automatically.
 
 **Tests:** `test_costs.py` — cost math (incl. cached-rate billing), usage
 normalization for both response shapes, unreadable-usage raises. Pure/offline.
@@ -279,7 +279,7 @@ re-measure this milestone. Reruns without `--gemini` cost zero Gemini.
 
 ## Milestone 8 — benchmark write-up
 
-Gold **verified** by the user (line-by-line vs source PDFs, no corrections). Re-ran
+Gold **verified** line-by-line against the source PDFs (no corrections). Re-ran
 scoring from cache (no new API calls) → FINAL accuracy in BENCHMARK §1, with the
 honest provenance caveat: PDF gold was `github_text`-seeded then human-verified, so
 `github_text` is at ceiling by construction and the meaningful comparison is
@@ -293,7 +293,7 @@ wins **skills** (75% vs 53%, icon-bar resume defeats multimodal).
 429'd (harness skips gracefully; rerun `eval/latency.py --gemini` on a fresh day).
 
 **Consolidated** accuracy + cost + latency into one summary table at the top of
-BENCHMARK.md (METRICS-SPEC §5 format) + headline one-liners.
+BENCHMARK.md (provider × accuracy/cost/latency) + headline one-liners.
 
 **Known limitation (noted for later):** the transport retry treats a *daily*-quota
 429 the same as a transient one, so it burns its full backoff (~60s) before giving
@@ -325,6 +325,6 @@ slow on an exhausted day).
   regenerable `eval/cache/` out. ⚠️ The provided file does **not** list `.ruff_cache/`
   or `.pytest_cache/` — deleted them before committing; recommend adding those two
   lines later.
-- **No push.** Committed locally only; the user publishes manually.
+- **No push.** Committed locally only; published manually by the maintainer.
 
 `ruff` clean; `pytest` 27 passed / 4 skipped (Gemini daily quota).

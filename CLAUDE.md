@@ -26,22 +26,40 @@ Model IDs are pinned in `src/resume_extractor/config.py` (single source of truth
 
 ```
 src/resume_extractor/
-  config.py    # pinned model IDs + shared settings (temperature, provider→env-var map)
-  schema.py    # Pydantic v2 models: Resume / Job / Education (the extraction "form")
-  sanity.py    # one-line connectivity check against Gemini
-  extract.py   # extract_resume(text) -> Resume via instructor + Gemini native SO
-  __init__.py  # public exports: Resume, Job, Education, extract_resume
+  __init__.py     # public exports
+  __main__.py     # `python -m resume_extractor` -> CLI
+  cli.py          # command-line entry point (the `resume-extractor` command)
+  config.py       # pinned model IDs, endpoints, temperature, provider->env-var map
+  schema.py       # Pydantic v2 models: Resume / Job / Education (the "form")
+  providers.py    # ProviderSpec registry + cached client factory (the one interface)
+  ingest.py       # PDF -> text (pypdf) for text-only providers
+  extract.py      # extraction calls (text + Gemini multimodal) + transport/validation retries
+  reliability.py  # provider fallback chain (Gemini->Groq->GitHub) + refusal detection
+  caching.py      # prompt/context-caching analysis + helper
+  costs.py        # token usage + hypothetical cost at list prices
+  scoring.py      # field-level accuracy scoring (used by the eval harness)
+  sanity.py       # one-line Gemini connectivity check
 tests/
-  data/sample_resume.txt   # extraction fixture
-  test_schema.py           # schema validation (no network)
-  test_sanity.py           # live Gemini hello (skips without GEMINI_API_KEY)
-  test_extraction.py       # live extraction on the fixture (skips without key)
+  data/sample_resume.txt   # text extraction fixture
+  sample_resumes/          # PDF fixtures + CREDITS.md (public templates / synthetic)
+  live_utils.py            # skip-on-free-tier-limit helper
+  test_schema.py test_scoring.py test_costs.py test_reliability.py     # offline
+  test_sanity.py test_extraction.py test_pdf_ingestion.py test_providers.py  # live (skip w/o keys)
 ```
 
-- Structured output goes through **`instructor`** over the **google-genai** SDK in
-  `Mode.JSON` (Gemini's native `response_schema` path).
-- `litellm` + `instructor` provide the unified interface for the OpenAI-compatible
-  fallbacks (Groq, GitHub Models). `pypdf` handles PDF text for text-only providers.
+- The **one interface** is `extract.extract_resume(text, provider=...)`, with all
+  providers reached through **`instructor`** (`providers.py`). PDFs go to Gemini
+  directly (multimodal) or through **`pypdf`** text extraction for text-only providers.
+- **Structured-output mode per provider** (rule #2 — prefer native SO, fall back to
+  tool-forcing):
+  - **Gemini** — native structured outputs via the **google-genai** SDK
+    (`Mode.JSON` / `response_schema`); also the only multimodal-PDF path.
+  - **Groq** (OpenAI-compatible) — `instructor.from_openai` in **`Mode.JSON`**
+    (switched from tool-forcing, which intermittently failed on Llama).
+  - **GitHub Models** (OpenAI-compatible) — `instructor.from_openai` in
+    **`Mode.TOOLS`** (tool-forcing).
+- `litellm` is a dependency but is **not** used for dispatch (kept for possible
+  cost/routing use later); dispatch uses `instructor` over each provider's client.
 
 ## Build / test / quality commands
 
