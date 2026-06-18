@@ -1,0 +1,21 @@
+Jane R. Doe
+San Francisco, CA | jane.doe@example.com | (415) 555-0142
+
+SUMMARY
+Backend engineer with 6 years building data-intensive Python services.
+
+SKILLS
+Python, PostgreSQL, Docker, Kubernetes, FastAPI
+
+EXPERIENCE
+Senior Software Engineer, Acme Corp — San Francisco, CA
+Jan 2021 – Present
+- Led migration of a monolith to microservices, cutting p95 latency by 40%.
+- Mentored 4 junior engineers.
+
+Software Engineer, Globex Inc — Remote
+Jun 2018 – Dec 2020
+- Built ETL pipelines processing 2 billion events per day.
+
+EDUCATION
+B.S. in Computer Science, UC Berkeley, 2014 – 2018

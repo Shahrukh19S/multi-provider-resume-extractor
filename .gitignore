@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets — NEVER commit real keys (SETUP.md §3)
+.env
+.env.*
+!.env.example
+
+# Local planning docs — never publish (gitignore has no inline comments, so the
+# pattern gets its own line; the label lives here as a standalone comment)
+Phase-2-Build-Kit/
