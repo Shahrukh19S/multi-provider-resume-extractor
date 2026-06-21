@@ -191,6 +191,28 @@ Gemini-multimodal (80.4%)**. Gemini wins **companies** (multi-column layout), Gr
 wins **skills** (icon-bar resume defeats multimodal). GitHub Models can't process the
 largest PDF (small free-tier input cap) → n=3.
 
+### How to read these numbers
+
+- **n** — number of measured calls behind the figure (the sample size). More samples
+  = more trustworthy. Text providers are **n=8**; Gemini PDF latency is **n=4**
+  (Gemini's free tier is ~20 requests/**day**, so we sample sparingly).
+- **Median** — the *typical* call: half were faster, half slower. We report the
+  median rather than the average because one slow outlier barely moves it, so it
+  reflects the real everyday experience.
+- **p95** (in [`BENCHMARK.md`](BENCHMARK.md)) — the **95th percentile**: 95% of calls
+  finish under it. This is the "plan-for-the-slow-tail" number you'd size a timeout
+  against, not the typical case.
+- **min / max** (in [`BENCHMARK.md`](BENCHMARK.md)) — fastest and slowest single
+  calls; the spread shows how variable latency is across different resumes.
+
+**Latency is not an apples-to-apples race.** Groq (0.67s) and GitHub (3.93s) time the
+**text path** (plain text in → JSON out). Gemini's **16.78s** times the
+**multimodal-PDF path** — the model reads and parses the *rendered document* (layout,
+columns, fonts) end-to-end. That heavier work is the cost, but it's exactly what lets
+Gemini handle messy multi-column resumes that defeat text extraction (hence its
+**companies** accuracy edge above). So Gemini's latency is a **standalone figure**,
+not part of the "Groq ~6× faster" comparison, which is text-path-vs-text-path only.
+
 ---
 
 ## Production decision log
