@@ -328,3 +328,24 @@ slow on an exhausted day).
 - **No push.** Committed locally only; published manually by the maintainer.
 
 `ruff` clean; `pytest` 27 passed / 4 skipped (Gemini daily quota).
+
+## Milestone 8 — follow-up (fresh-quota Gemini latency)
+
+Closed the one deferred benchmark cell. On a **fresh-quota day (2026-06-21)** ran the
+new **Gemini-only** latency path and recorded the multimodal-PDF numbers:
+**median 16.78s, p95 26.29s (min 9.06 / max 26.29), n=4**. BENCHMARK §3 + summary
+table updated; no "pending/deferred" markers remain.
+
+- **New `--gemini-only` mode in `eval/latency.py`** — skips the Groq/GitHub timing
+  loop and **merges** into the existing `latency.json`, so the published text-path
+  numbers (Groq 0.67s / GitHub 3.93s) are **preserved**, not overwritten by a fresh
+  same-session re-time. Times the first **4** PDFs (`[:4]`), matching the accuracy
+  benchmark's `gemini_multimodal` n=4 set.
+- **Quota:** spent **4 of ~20** daily Gemini requests; all 4 calls succeeded (no
+  429s). Groq/GitHub intentionally **not** re-timed.
+- **Honest framing kept:** Gemini's 16.78s is the *multimodal-PDF* path (end-to-end
+  document parsing) — reported standalone, **not** folded into the "Groq ~6× faster"
+  text-path headline. The order-of-magnitude gap is the cost of multimodal parsing,
+  which also buys the layout-structure accuracy edge (companies F1, §1).
+
+`ruff` clean.

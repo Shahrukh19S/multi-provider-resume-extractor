@@ -27,7 +27,7 @@ price. Verified by `eval/run_eval.py` + `eval/latency.py`.
 
 | Provider (path) | Text acc (exact gold) | PDF acc (verified gold) | Hyp. cost / 1k | Latency median | Notes |
 |---|---|---|---|---|---|
-| Gemini (multimodal PDF) | — | **80.4%** (n=4) | $0.60 | _pending fresh-quota run_ | only native PDF path; best on multi-column structure |
+| Gemini (multimodal PDF) | — | **80.4%** (n=4) | $0.60 | 16.78s (PDF path) | only native PDF path; best on multi-column structure |
 | Groq (text) | **100%** (n=4) | **85.4%** (n=4) | $1.94 | **0.67s** | fastest; `Mode.JSON` (reliable, heavier tokens) |
 | GitHub Models (text) | **100%** (n=4) | 100%\* (n=3) | **$0.155** | 3.93s | \*gold-seeder → ceiling by construction; cheapest; small input cap |
 
@@ -155,14 +155,19 @@ Wall-clock per extraction (`eval/latency.py`); text path on the synthetic set,
 |---|---|---|---|---|---|---|
 | Groq | llama-3.3-70b-versatile | text | **0.67s** | 2.25s | 0.60 / 2.25 | 8 |
 | GitHub Models | openai/gpt-4o-mini | text | 3.93s | 4.96s | 2.94 / 4.96 | 8 |
-| Gemini | gemini-2.5-flash | multimodal PDF | _deferred_ | — | — | 0 |
+| Gemini | gemini-2.5-flash | multimodal PDF | 16.78s | 26.29s | 9.06 / 26.29 | 4 |
 
 - **Groq is ~6× faster than GitHub Models** (0.67s vs 3.93s median) — its headline
   speed advantage (custom inference hardware), making it the natural workhorse.
-- **Gemini latency — PENDING a fresh-quota run.** The ~20/day free quota was
-  exhausted by the day's accuracy + cost runs, so timed PDF calls 429'd. This row is
-  intentionally left blank; fill it by running `uv run python eval/latency.py
-  --gemini` on a day with unused Gemini quota.
+- **Gemini multimodal PDF: median 16.78s (p95 26.29s), n=4** — measured on a
+  fresh-quota day (spending 4 of the ~20 daily requests) via
+  `eval/latency.py --gemini-only`, which times only Gemini and preserves the
+  published Groq/GitHub numbers above. This is the **multimodal-PDF** path: the model
+  ingests and parses the rendered document end-to-end, so it is **not** comparable
+  like-for-like to the text-path numbers — it is reported as a standalone figure and
+  **not** folded into the "~6× faster" headline. The order-of-magnitude gap vs the
+  text path is the cost of full-document multimodal parsing, which is also what buys
+  the layout-structure accuracy edge on multi-column resumes (companies F1, §1).
 
 ## 4. Reliability (Milestone 5)
 

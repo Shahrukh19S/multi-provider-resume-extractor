@@ -13,5 +13,11 @@
     "min_s": 2.94,
     "max_s": 4.96
   },
-  "gemini_multimodal": null
+  "gemini_multimodal": {
+    "n": 4,
+    "median_s": 16.78,
+    "p95_s": 26.29,
+    "min_s": 9.06,
+    "max_s": 26.29
+  }
 }

@@ -1,14 +1,17 @@
 """Milestone 8: latency measurement — wall-clock per extraction (METRICS-SPEC §3).
 
 Quota-aware: Groq + GitHub carry the bulk (text extraction over the synthetic set,
-repeated for a stable sample); Gemini gets only a couple of timed PDF multimodal
-calls (respect ~20/day). Latency needs *fresh* timed calls, so this does NOT use the
+repeated for a stable sample); Gemini gets only a few timed PDF multimodal calls
+(respect ~20/day). Latency needs *fresh* timed calls, so this does NOT use the
 accuracy cache. Results are written to `eval/latency.json` and printed; copy the
 numbers into BENCHMARK §3.
 
 Usage:
-    uv run python eval/latency.py            # Groq + GitHub text latency
-    uv run python eval/latency.py --gemini   # + a couple of timed Gemini PDF calls
+    uv run python eval/latency.py              # Groq + GitHub text latency
+    uv run python eval/latency.py --gemini     # + a few timed Gemini PDF calls
+    uv run python eval/latency.py --gemini-only # ONLY Gemini (n=4); merges into the
+                                                # existing latency.json, preserving
+                                                # the published Groq/GitHub numbers
 """
 
 from __future__ import annotations
@@ -24,7 +27,9 @@ from resume_extractor.extract import extract_resume, extract_resume_from_pdf
 ROOT = Path(__file__).parent
 TEXTS = sorted((ROOT / "text_resumes").glob("*.txt"))
 PDF_DIR = ROOT.parent / "tests" / "sample_resumes"
-USE_GEMINI = "--gemini" in sys.argv
+GEMINI_ONLY = "--gemini-only" in sys.argv
+USE_GEMINI = GEMINI_ONLY or "--gemini" in sys.argv
+GEMINI_N = 4  # PDFs to time; matches the accuracy benchmark's gemini_multimodal n=4
 
 
 def _time(fn) -> float | None:
@@ -58,22 +63,33 @@ def _summary(name: str, samples: list[float]) -> dict | None:
 
 
 def main() -> None:
-    results: dict[str, dict | None] = {}
+    out_path = ROOT / "latency.json"
+    # --gemini-only merges into the existing file so the published Groq/GitHub
+    # numbers are preserved (re-timing them would overwrite them with new values).
+    if GEMINI_ONLY and out_path.exists():
+        results: dict[str, dict | None] = json.loads(
+            out_path.read_text(encoding="utf-8")
+        )
+    else:
+        results = {}
 
-    for provider in ("groq", "github"):
-        print(f"\n== {provider} (text, 2 rounds x {len(TEXTS)}) ==")
-        samples: list[float] = []
-        for _ in range(2):
-            for txt in TEXTS:
-                text = txt.read_text(encoding="utf-8")
-                dt = _time(lambda: extract_resume(text, provider))
-                if dt is not None:
-                    samples.append(dt)
-        results[f"{provider}_text"] = _summary(f"{provider}_text", samples)
+    if not GEMINI_ONLY:
+        for provider in ("groq", "github"):
+            print(f"\n== {provider} (text, 2 rounds x {len(TEXTS)}) ==")
+            samples: list[float] = []
+            for _ in range(2):
+                for txt in TEXTS:
+                    text = txt.read_text(encoding="utf-8")
+                    dt = _time(lambda: extract_resume(text, provider))
+                    if dt is not None:
+                        samples.append(dt)
+            results[f"{provider}_text"] = _summary(f"{provider}_text", samples)
+    else:
+        print("\n(gemini-only — preserving published Groq/GitHub numbers)")
 
     if USE_GEMINI:
-        print("\n== gemini (multimodal PDF, 2 calls — quota-limited) ==")
-        pdfs = sorted(PDF_DIR.glob("*.pdf"))[:2]
+        print(f"\n== gemini (multimodal PDF, {GEMINI_N} calls — quota-limited) ==")
+        pdfs = sorted(PDF_DIR.glob("*.pdf"))[:GEMINI_N]
         samples = []
         for pdf in pdfs:
             dt = _time(lambda: extract_resume_from_pdf(pdf))
@@ -81,11 +97,9 @@ def main() -> None:
                 samples.append(dt)
         results["gemini_multimodal"] = _summary("gemini_multimodal", samples)
     else:
-        print(
-            "\n(gemini latency skipped — pass --gemini for a couple of timed PDF calls)"
-        )
+        print("\n(gemini latency skipped — pass --gemini for a few timed PDF calls)")
 
-    (ROOT / "latency.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    out_path.write_text(json.dumps(results, indent=2), encoding="utf-8")
     print("\nWrote eval/latency.json")
 
 

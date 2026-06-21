@@ -164,7 +164,8 @@ uv run ruff check . && uv run ruff format --check .
 # 6. Reproduce the benchmark
 uv run python eval/run_eval.py            # Groq + GitHub accuracy (cached; no Gemini)
 uv run python eval/run_eval.py --gemini   # + Gemini multimodal comparison
-uv run python eval/latency.py --gemini    # latency (Gemini row needs fresh quota)
+uv run python eval/latency.py             # Groq + GitHub text latency
+uv run python eval/latency.py --gemini-only # Gemini-only (n=4); merges, preserves above
 ```
 
 Get free keys: Gemini → [aistudio.google.com/apikey](https://aistudio.google.com/apikey) ·
@@ -180,7 +181,7 @@ is hypothetical at list price (verified 2026-06-18).
 
 | Provider (path) | Text acc (exact gold) | PDF acc (verified gold) | Hyp. cost / 1k | Latency median |
 |---|---|---|---|---|
-| Gemini (multimodal PDF) | — | 80.4% (n=4) | $0.60 | _pending fresh quota_ |
+| Gemini (multimodal PDF) | — | 80.4% (n=4) | $0.60 | 16.78s (PDF path) |
 | Groq (text) | **100%** (n=4) | **85.4%** (n=4) | $1.94 | **0.67s** |
 | GitHub Models (text) | **100%** (n=4) | 100%\* (n=3) | **$0.155** | 3.93s |
 
